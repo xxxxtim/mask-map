@@ -1,53 +1,45 @@
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-markercluster';
-import React, { useContext } from 'react';
+import React, { useContext, memo } from 'react';
 import { APIContext } from './Main'
+import MaskTable from './MaskTable'
+
+
+function LocationMarker(props) {
+
+    const map = useMapEvents({
+        click() {
+            map.flyTo(props.locate, map.getZoom())
+        },
+
+    })
+    return (<></>)
+}
+// map component
 const Map = () => {
-    const { features } = useContext(APIContext)
-    console.log(typeof features)
-    // const Markers = features.map((item) => {
-    //     return (
-    //         <Marker position={item.geometry.coordinates}>
-    //             <Popup>
-    //                 A pretty CSS3 popup. <br /> Easily customizable.
-    //             </Popup>
-    //         </Marker>
-    //     )
-    // });
-    var Markers;
-    if (typeof features !== 'undefined') {
-        Markers = features.map((item) => {
-            return (
-                <Marker position={item.geometry.coordinates}>
-                    <Popup>
-                        A pretty CSS3 popup. <br /> Easily customizable.
-                </Popup>
-                </Marker>
-            )
-        });
-    }
-
-
+    const { state } = useContext(APIContext)
+    console.log(state)
 
     return (
-        <MapContainer style={{ width: '100%', height: '100vh' }} center={[51.505, -0.09]} zoom={13} scrollWheelZoom={false}>
+        <MapContainer style={{ width: '100%', height: '100vh' }} center={[25.0450096, 121.5803059]} zoom={13} scrollWheelZoom={true}>
             <TileLayer
                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            <MarkerClusterGroup>
-                <Marker position={[51.505, -0.09]}>
-                    <Popup>
-                        A pretty CSS3 popup. <br /> Easily customizable.
-                </Popup>
-                </Marker>
-                <Marker position={[51.505, -0.06]}>
-                    <Popup>
-                        A pretty CSS3 popup. <br /> Easily customizable.
-                </Popup>
-                </Marker>
-                {/* {Markers} */}
+            <MarkerClusterGroup showCoverageOnHover={false}>
+                {state.features.map((item, index) => {
+                    console.log(index)
+                    return (
+                        <Marker key={index} position={[item.geometry.coordinates[1], item.geometry.coordinates[0]]}>
+                            <Popup>
+                                <MaskTable shopData={item.properties} />
+                            </Popup>
+                        </Marker>
+                    )
+                })}
+                <LocationMarker locate={state.active} />
             </MarkerClusterGroup>
         </MapContainer>)
 }
-export default Map
+const MemoMap = memo(Map)
+export default MemoMap
