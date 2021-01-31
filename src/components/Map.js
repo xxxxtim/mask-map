@@ -6,19 +6,15 @@ import MaskTable from './MaskTable'
 
 
 function LocationMarker(props) {
-
     const map = useMapEvents({
         click() {
             map.flyTo(props.locate, map.getZoom())
         },
-
     })
     return (<></>)
 }
-// map component
 const Map = () => {
     const { state } = useContext(APIContext)
-    console.log(state)
 
     return (
         <MapContainer style={{ width: '100%', height: '100vh' }} center={[25.0450096, 121.5803059]} zoom={13} scrollWheelZoom={true}>
@@ -28,7 +24,6 @@ const Map = () => {
             />
             <MarkerClusterGroup showCoverageOnHover={false}>
                 {state.features.map((item, index) => {
-                    console.log(index)
                     return (
                         <Marker key={index} position={[item.geometry.coordinates[1], item.geometry.coordinates[0]]}>
                             <Popup>
