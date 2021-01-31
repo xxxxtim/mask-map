@@ -13,7 +13,7 @@ const Menus = () => {
             {item.CityName}
         </Menu.Item>)
     })
-    return (<Menu theme="dark" mode="inline" defaultSelectedKeys={['4']}>
+    return (<Menu theme="dark" mode="inline" defaultSelectedKeys={['0']}>
         {cityNames}
     </Menu>)
 }
