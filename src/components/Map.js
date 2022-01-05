@@ -12,6 +12,10 @@ import { APIContext } from "./Main";
 import MaskTable from "./MaskTable";
 import btsDatas from "../assets/btsConnection.json";
 
+//  test for import
+import L from "leaflet";
+import icon from "./Constants";
+
 function LocationMarker(props) {
   const map = useMapEvents({
     click() {
@@ -21,26 +25,27 @@ function LocationMarker(props) {
   return <></>;
 }
 
-//  autoLocate
-// function AutoLocation() {
-//   const [position, setPosition] = useState(null);
-//   const [bbox, setBbox] = useState([]);
+function AutoLocationMarker() {
+  const [position, setPosition] = useState(null);
+  const [bbox, setBbox] = useState([]);
 
-//   const map = useMap();
+  const map = useMap();
 
-//   useEffect(() => {
-//     map.locate().on("locationfound", function (e) {
-//       setPosition(e.latlng);
-//       map.flyTo(e.latlng, map.getZoom());
-//       const radius = e.accuracy;
-//       const circle = L.circle(e.latlng, radius);
-//       circle.addTo(map);
-//       setBbox(e.bounds.toBBoxString().split(","));
-//     });
-//   }, [map]);
+  useEffect(() => {
+    map.locate().on("locationfound", function (e) {
+      setPosition(e.latlng);
+      map.flyTo(e.latlng, map.getZoom());
+      const radius = e.accuracy;
+      const circle = L.circle(e.latlng, radius);
+      circle.addTo(map);
+      setBbox(e.bounds.toBBoxString().split(","));
+    });
+  }, [map]);
 
-//   return position === null ? null : <Marker position={position}></Marker>;
-// }
+  return position === null ? null : (
+    <Marker position={position} icon={icon}></Marker>
+  );
+}
 
 const Map = () => {
   const { state } = useContext(APIContext);
@@ -57,16 +62,6 @@ const Map = () => {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <MarkerClusterGroup showCoverageOnHover={false}>
-        {/* {state.features.map((item, index) => {
-                    return (
-                        <Marker key={index} position={[item.geometry.coordinates[1], item.geometry.coordinates[0]]}>
-                            <Popup>
-                                <MaskTable shopData={item.properties} />
-                            </Popup>
-                        </Marker>
-                    )
-                })} */}
-
         {btsDatas.map((item, index) => {
           return (
             <Marker key={index} position={[item.latitude, item.longtitude]}>
@@ -84,6 +79,7 @@ const Map = () => {
         })}
         <LocationMarker locate={state.active} />
       </MarkerClusterGroup>
+      <AutoLocationMarker />
     </MapContainer>
   );
 };
